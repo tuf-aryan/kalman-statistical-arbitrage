@@ -1,20 +1,20 @@
 # Fdb version 4
-["bibtex main"] 1790692860.40201 "main.aux" "main.bbl" "main" 1790694285.96033 0
+["bibtex main"] 1790692860.40201 "main.aux" "main.bbl" "main" 1790695266.6185 0
   "./references.bib" 1790689113.60656 4761 8778ac8d2006f6a335185e91147876dc ""
   "C:/Users/aryan/AppData/Local/Programs/MiKTeX/bibtex/bst/bibtex/apalike.bst" 1291972791 24635 604dafcc79f521a11ea73e506e1fbd98 ""
-  "main.aux" 1790694280.35004 10470 8ca7207b941eba0f37abee4540197c5f "pdflatex"
+  "main.aux" 1790695262.92229 10470 8ca7207b941eba0f37abee4540197c5f "pdflatex"
   (generated)
   "main.bbl"
   "main.blg"
   (rewritten before read)
-["pdflatex"] 1790694272.1546 "c:/Users/aryan/Downloads/1/Kalman_stat_arb_final/Kalman_stat_arb/paper/main.tex" "main.pdf" "main" 1790694285.96835 0
-  "../results/figures/fig2_hedge_ratio_comparison.png" 1790690267.81229 100958 a147757e2f2fadfe3e4bf8cfd2dd07be ""
-  "../results/figures/fig3_spreads_comparison.png" 1790690269.60023 249970 872e03d1f716f0776ff54eb42679ae2e ""
-  "../results/figures/fig4_adf_halflife.png" 1790690270.38074 38551 342127af7da66e9d6e6c72d616793957 ""
-  "../results/figures/fig5_zscore_signals.png" 1790690270.87145 140223 dd2f644a792cc07970d4cacea2743d6d ""
-  "../results/figures/fig6_equity_curves.png" 1790690271.25907 119321 2560112a4cd60c33ff7a2e2dfa53768d ""
-  "../results/figures/fig7_drawdowns.png" 1790690271.68902 128369 bcd0cb50dc4bcd22f3de99b6bfa8928b ""
-  "../results/figures/fig8_sensitivity.png" 1790690272.64705 128182 b7a6a3e7c3e64a1f01f679a2b5fc2ded ""
+["pdflatex"] 1790695256.79059 "c:/Users/aryan/Downloads/1/Kalman_stat_arb_final/Kalman_stat_arb/paper/main.tex" "main.pdf" "main" 1790695266.62816 0
+  "../results/figures/fig2_hedge_ratio_comparison.png" 1790694301.09186 100958 a147757e2f2fadfe3e4bf8cfd2dd07be ""
+  "../results/figures/fig3_spreads_comparison.png" 1790694303.77784 249970 872e03d1f716f0776ff54eb42679ae2e ""
+  "../results/figures/fig4_adf_halflife.png" 1790694305.0884 38551 342127af7da66e9d6e6c72d616793957 ""
+  "../results/figures/fig5_zscore_signals.png" 1790694305.86012 140223 dd2f644a792cc07970d4cacea2743d6d ""
+  "../results/figures/fig6_equity_curves.png" 1790694306.53233 119321 2560112a4cd60c33ff7a2e2dfa53768d ""
+  "../results/figures/fig7_drawdowns.png" 1790694307.15889 128369 bcd0cb50dc4bcd22f3de99b6bfa8928b ""
+  "../results/figures/fig8_sensitivity.png" 1790694309.18345 128182 b7a6a3e7c3e64a1f01f679a2b5fc2ded ""
   "../results/tables/cointegration.tex" 1790694152.58094 452 0430fb0e75b779788c9d9e68d948cb84 ""
   "../results/tables/performance.tex" 1790694285.31589 463 5cf328096f568c36a9f6aee6bf4f7a6c ""
   "../results/tables/performance_gross_net.tex" 1790694285.32289 353 a38e3f38466b3f9d8617e2ec7d501a73 ""
@@ -141,11 +141,11 @@
   "C:/Users/aryan/AppData/Local/Programs/MiKTeX/tex/latex/refcount/refcount.sty" 1576433952 9878 9e94e8fa600d95f9c7731bb21dfb67a4 ""
   "C:/Users/aryan/AppData/Local/Programs/MiKTeX/tex/latex/rerunfilecheck/rerunfilecheck.sty" 1751104012 9684 a33a14b82ce60d6e77cb9be689d79ee6 ""
   "C:/Users/aryan/AppData/Local/Programs/MiKTeX/tex/latex/url/url.sty" 1388490452 12796 8edb7d69a20b857904dd0ea757c14ec9 ""
-  "c:/Users/aryan/Downloads/1/Kalman_stat_arb_final/Kalman_stat_arb/paper/main.tex" 1790694265.21007 33426 037b35bf1976012383f78cf57f3e2a42 ""
-  "main.aux" 1790694280.35004 10470 8ca7207b941eba0f37abee4540197c5f "pdflatex"
-  "main.bbl" 1790692861.09397 4041 7787e9bfe50738e0fb5d15d9e87af885 "bibtex main"
-  "main.out" 1790694280.45659 4056 659ebd8c8d2b164e6b840cad7cbc9090 "pdflatex"
-  "numbers.tex" 1790690275.96811 4599 664fae331a29cbb34590289a59aada94 ""
+  "c:/Users/aryan/Downloads/1/Kalman_stat_arb_final/Kalman_stat_arb/paper/main.tex" 1790695253.13116 33446 bacd29e86b1f9df42e217ced1a9401f3 ""
+  "main.aux" 1790695262.92229 10470 8ca7207b941eba0f37abee4540197c5f "pdflatex"
+  "main.bbl" 1790695146.26157 4041 7787e9bfe50738e0fb5d15d9e87af885 "bibtex main"
+  "main.out" 1790695262.99585 4056 659ebd8c8d2b164e6b840cad7cbc9090 "pdflatex"
+  "numbers.tex" 1790694313.64067 4599 664fae331a29cbb34590289a59aada94 ""
   (generated)
   "main.aux"
   "main.log"
