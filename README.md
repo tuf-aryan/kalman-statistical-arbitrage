@@ -26,7 +26,6 @@ worse than both OLS benchmarks.
 This was not the result I initially expected, but I kept it because
 it is an important part of the comparison.
 
-
 ## Data
 
 The project uses daily adjusted closing prices of four NSE-listed
@@ -47,7 +46,6 @@ test period:
 
 The formation period is used for pair selection and model setup.
 The trading results are evaluated on the separate test period.
-
 
 ## Methods
 
@@ -71,7 +69,6 @@ The Kalman filter uses a one-step-ahead estimate for the trading
 signals so that the current observation is not used to make the
 same-day trading decision.
 
-
 ## Analysis
 
 The project follows these main steps:
@@ -89,7 +86,7 @@ The project follows these main steps:
 10. Include transaction costs in the backtest.
 11. Compare the performance of the three methods.
 12. Run a few robustness checks.
-
+13. Independently re-compute the main results and run the tests.
 
 ## Project Structure
 
@@ -101,17 +98,18 @@ Kalman_stat_arb/
 ├── results/
 ├── src/
 │   ├── data_collection.py
-│   ├── eda.py
-│   ├── cointergration.py
+│   ├── cointegration.py
 │   ├── static_ols.py
 │   ├── rolling_ols.py
 │   ├── kalman_filter.py
 │   ├── stationarity.py
 │   ├── signal_generation.py
 │   ├── backtesting.py
-│   ├── performance_metrices.py
+│   ├── performance_metrics.py
 │   ├── robustness.py
-│   └── 12_visualizations.py
+│   ├── visualizations.py
+│   ├── make_paper_numbers.py
+│   └── verify_independent.py
 │
 ├── tests/
 ├── paper/

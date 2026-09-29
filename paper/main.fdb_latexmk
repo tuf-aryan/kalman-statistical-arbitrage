@@ -1,13 +1,13 @@
 # Fdb version 4
-["bibtex main"] 1790692860.40201 "main.aux" "main.bbl" "main" 1790693691.6125 0
+["bibtex main"] 1790692860.40201 "main.aux" "main.bbl" "main" 1790694285.96033 0
   "./references.bib" 1790689113.60656 4761 8778ac8d2006f6a335185e91147876dc ""
   "C:/Users/aryan/AppData/Local/Programs/MiKTeX/bibtex/bst/bibtex/apalike.bst" 1291972791 24635 604dafcc79f521a11ea73e506e1fbd98 ""
-  "main.aux" 1790693688.75777 10470 8ca7207b941eba0f37abee4540197c5f "pdflatex"
+  "main.aux" 1790694280.35004 10470 8ca7207b941eba0f37abee4540197c5f "pdflatex"
   (generated)
   "main.bbl"
   "main.blg"
   (rewritten before read)
-["pdflatex"] 1790693683.16289 "c:/Users/aryan/Downloads/1/Kalman_stat_arb_final/Kalman_stat_arb/paper/main.tex" "main.pdf" "main" 1790693691.76486 0
+["pdflatex"] 1790694272.1546 "c:/Users/aryan/Downloads/1/Kalman_stat_arb_final/Kalman_stat_arb/paper/main.tex" "main.pdf" "main" 1790694285.96835 0
   "../results/figures/fig2_hedge_ratio_comparison.png" 1790690267.81229 100958 a147757e2f2fadfe3e4bf8cfd2dd07be ""
   "../results/figures/fig3_spreads_comparison.png" 1790690269.60023 249970 872e03d1f716f0776ff54eb42679ae2e ""
   "../results/figures/fig4_adf_halflife.png" 1790690270.38074 38551 342127af7da66e9d6e6c72d616793957 ""
@@ -15,11 +15,11 @@
   "../results/figures/fig6_equity_curves.png" 1790690271.25907 119321 2560112a4cd60c33ff7a2e2dfa53768d ""
   "../results/figures/fig7_drawdowns.png" 1790690271.68902 128369 bcd0cb50dc4bcd22f3de99b6bfa8928b ""
   "../results/figures/fig8_sensitivity.png" 1790690272.64705 128182 b7a6a3e7c3e64a1f01f679a2b5fc2ded ""
-  "../results/tables/cointegration.tex" 1790690141.52655 452 0430fb0e75b779788c9d9e68d948cb84 ""
-  "../results/tables/performance.tex" 1790690250.4905 463 5cf328096f568c36a9f6aee6bf4f7a6c ""
-  "../results/tables/performance_gross_net.tex" 1790690250.49949 353 a38e3f38466b3f9d8617e2ec7d501a73 ""
-  "../results/tables/stationarity.tex" 1790690243.02161 327 a33b303b9c2a73691ea57924f4ea5bd5 ""
-  "../results/tables/trade_stats.tex" 1790690250.52159 354 34e5d8e12df6f0353bcad64a81dd0734 ""
+  "../results/tables/cointegration.tex" 1790694152.58094 452 0430fb0e75b779788c9d9e68d948cb84 ""
+  "../results/tables/performance.tex" 1790694285.31589 463 5cf328096f568c36a9f6aee6bf4f7a6c ""
+  "../results/tables/performance_gross_net.tex" 1790694285.32289 353 a38e3f38466b3f9d8617e2ec7d501a73 ""
+  "../results/tables/stationarity.tex" 1790694269.81206 327 a33b303b9c2a73691ea57924f4ea5bd5 ""
+  "../results/tables/trade_stats.tex" 1790694285.3269 354 34e5d8e12df6f0353bcad64a81dd0734 ""
   "C:/Users/aryan/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map" 1787053320.99701 107610 4da7ae28295913e9078533e26bc4b53b ""
   "C:/Users/aryan/AppData/Local/MiKTeX/fonts/pk/ljfour/jknappen/ec/dpi600/ecbx1000.pk" 1774487941.70777 25420 6458c84a915c1d765e4561b4a0815206 ""
   "C:/Users/aryan/AppData/Local/MiKTeX/fonts/pk/ljfour/jknappen/ec/dpi600/ecbx1095.pk" 1777060264.61728 28976 7cbe7ce89d4962643154d0073b6cb55f ""
@@ -141,10 +141,10 @@
   "C:/Users/aryan/AppData/Local/Programs/MiKTeX/tex/latex/refcount/refcount.sty" 1576433952 9878 9e94e8fa600d95f9c7731bb21dfb67a4 ""
   "C:/Users/aryan/AppData/Local/Programs/MiKTeX/tex/latex/rerunfilecheck/rerunfilecheck.sty" 1751104012 9684 a33a14b82ce60d6e77cb9be689d79ee6 ""
   "C:/Users/aryan/AppData/Local/Programs/MiKTeX/tex/latex/url/url.sty" 1388490452 12796 8edb7d69a20b857904dd0ea757c14ec9 ""
-  "c:/Users/aryan/Downloads/1/Kalman_stat_arb_final/Kalman_stat_arb/paper/main.tex" 1790693671.7489 33439 fe4426fbd1dbdeece17c45abf0f28540 ""
-  "main.aux" 1790693688.75777 10470 8ca7207b941eba0f37abee4540197c5f "pdflatex"
+  "c:/Users/aryan/Downloads/1/Kalman_stat_arb_final/Kalman_stat_arb/paper/main.tex" 1790694265.21007 33426 037b35bf1976012383f78cf57f3e2a42 ""
+  "main.aux" 1790694280.35004 10470 8ca7207b941eba0f37abee4540197c5f "pdflatex"
   "main.bbl" 1790692861.09397 4041 7787e9bfe50738e0fb5d15d9e87af885 "bibtex main"
-  "main.out" 1790693688.82907 4056 659ebd8c8d2b164e6b840cad7cbc9090 "pdflatex"
+  "main.out" 1790694280.45659 4056 659ebd8c8d2b164e6b840cad7cbc9090 "pdflatex"
   "numbers.tex" 1790690275.96811 4599 664fae331a29cbb34590289a59aada94 ""
   (generated)
   "main.aux"
