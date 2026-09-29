@@ -1,0 +1,68 @@
+OK   Static OLS: max |net - returns_net.csv|: independent=9.980080998e-17  generated=0
+OK   Static OLS: max |gross - returns_gross.csv|: independent=9.980080998e-17  generated=0
+OK   Static OLS: cumulative net return: independent=0.504205747  generated=0.504205747
+OK   Static OLS: annualised net return: independent=0.08600117163  generated=0.08600117163
+OK   Static OLS: annualised net vol: independent=0.07533308233  generated=0.07533308233
+OK   Static OLS: net Sharpe: independent=1.141612277  generated=1.141612277
+OK   Static OLS: net Sortino: independent=1.974411208  generated=1.974411208
+OK   Static OLS: net max drawdown: independent=-0.09876250687  generated=-0.09876250687
+OK   Static OLS: gross Sharpe: independent=1.300273699  generated=1.300273699
+OK   Static OLS: number of trades: independent=29  generated=29
+OK   Static OLS: winning trades: independent=24  generated=24
+OK   Static OLS: hit rate: independent=0.8275862069  generated=0.8275862069
+OK   Static OLS: average trade P&L: independent=0.01455712224  generated=0.01455712224
+OK   Static OLS: profit factor: independent=4.802129837  generated=4.802129837
+OK   Static OLS: average holding days: independent=15.48275862  generated=15.48275862
+OK   Static OLS: total turnover: independent=58  generated=58
+OK   Static OLS: sum of trade P&L == sum of daily net returns: independent=0.4221565449  generated=0.4221565449
+OK   Static OLS: first trade P&L by hand vs trades.csv: independent=0.01649636539  generated=0.01649636539
+OK   Rolling OLS: max |net - returns_net.csv|: independent=9.974659987e-17  generated=0
+OK   Rolling OLS: max |gross - returns_gross.csv|: independent=9.974659987e-17  generated=0
+OK   Rolling OLS: cumulative net return: independent=0.3456642342  generated=0.3456642342
+OK   Rolling OLS: annualised net return: independent=0.06371784203  generated=0.06371784203
+OK   Rolling OLS: annualised net vol: independent=0.08060711657  generated=0.08060711657
+OK   Rolling OLS: net Sharpe: independent=0.790474151  generated=0.790474151
+OK   Rolling OLS: net Sortino: independent=1.316908733  generated=1.316908733
+OK   Rolling OLS: net max drawdown: independent=-0.1183238005  generated=-0.1183238005
+OK   Rolling OLS: gross Sharpe: independent=0.9748326689  generated=0.9748326689
+OK   Rolling OLS: number of trades: independent=32  generated=32
+OK   Rolling OLS: winning trades: independent=27  generated=27
+OK   Rolling OLS: hit rate: independent=0.84375  generated=0.84375
+OK   Rolling OLS: average trade P&L: independent=0.009774177901  generated=0.009774177901
+OK   Rolling OLS: profit factor: independent=3.841161954  generated=3.841161954
+OK   Rolling OLS: average holding days: independent=10.0625  generated=10.0625
+OK   Rolling OLS: total turnover: independent=72.27648369  generated=72.27648369
+OK   Rolling OLS: sum of trade P&L == sum of daily net returns: independent=0.3127736928  generated=0.3127736928
+OK   Rolling OLS: first trade P&L by hand vs trades.csv: independent=0.03255929128  generated=0.03255929128
+OK   Kalman filter: max |net - returns_net.csv|: independent=9.974659987e-17  generated=0
+OK   Kalman filter: max |gross - returns_gross.csv|: independent=9.714451465e-17  generated=0
+OK   Kalman filter: cumulative net return: independent=-0.1029566748  generated=-0.1029566748
+OK   Kalman filter: annualised net return: independent=-0.0189070473  generated=-0.0189070473
+OK   Kalman filter: annualised net vol: independent=0.08003284284  generated=0.08003284284
+OK   Kalman filter: net Sharpe: independent=-0.2362411059  generated=-0.2362411059
+OK   Kalman filter: net Sortino: independent=-0.3076514862  generated=-0.3076514862
+OK   Kalman filter: net max drawdown: independent=-0.2117413896  generated=-0.2117413896
+OK   Kalman filter: gross Sharpe: independent=-0.01690598353  generated=-0.01690598353
+OK   Kalman filter: number of trades: independent=43  generated=43
+OK   Kalman filter: winning trades: independent=23  generated=23
+OK   Kalman filter: hit rate: independent=0.5348837209  generated=0.5348837209
+OK   Kalman filter: average trade P&L: independent=-0.002158362634  generated=-0.002158362634
+OK   Kalman filter: profit factor: independent=0.7996802907  generated=0.7996802907
+OK   Kalman filter: average holding days: independent=3.837209302  generated=3.837209302
+OK   Kalman filter: total turnover: independent=86.17052641  generated=86.17052641
+OK   Kalman filter: sum of trade P&L == sum of daily net returns: independent=-0.09280959328  generated=-0.09280959328
+OK   Kalman filter: first trade P&L by hand vs trades.csv: independent=0.01504657069  generated=0.01504657069
+OK   Kalman: max |replayed innovation - saved spread|: independent=8.731348977e-13  generated=0
+OK   Kalman: max |replayed prior beta - saved beta|: independent=4.936689946e-12  generated=0
+OK   Rolling OLS: max |polyfit(window ending t-1) - saved beta/alpha|: independent=2.783417941e-10  generated=0
+OK   Static OLS: AR(1) b: independent=-0.01365175606  generated=-0.01365175606
+OK   Static OLS: half-life: independent=50.42611369  generated=50.42611369
+OK   Static OLS: KPSS statistic: independent=3.274029513  generated=3.274029513
+OK   Rolling OLS: AR(1) b: independent=-0.07717313967  generated=-0.07717313967
+OK   Rolling OLS: half-life: independent=8.630503256  generated=8.630503256
+OK   Rolling OLS: KPSS statistic: independent=0.1439019744  generated=0.1439019744
+OK   Kalman filter: AR(1) b: independent=-0.268490013  generated=-0.268490013
+OK   Kalman filter: half-life: independent=2.217046484  generated=2.217046484
+OK   Kalman filter: KPSS statistic: independent=0.0576674389  generated=0.0576674389
+OK   BH: max |q (independent) - q (generated)|: independent=5.551115123e-17  generated=0
+INFO pairs with BH q < 0.05: 0 of 6

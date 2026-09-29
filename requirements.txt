@@ -1,0 +1,15 @@
+# Dependencies actually imported by the code in this repository.
+#
+# numpy, pandas, matplotlib: used by every stage of the pipeline.
+# yfinance: imported ONLY by src/data_collection.py, and ONLY if data/prices.csv
+#           is missing (or lacks the required tickers). With the shipped
+#           data/prices.csv the pipeline needs no network access.
+#
+# NOT dependencies: statsmodels and scipy. All statistical tests (ADF,
+# Engle-Granger, KPSS, Benjamini-Hochberg) are implemented in utils.py.
+# Building the PDF additionally needs a LaTeX installation (pdflatex, bibtex).
+
+numpy==2.2.6
+pandas==2.2.3
+matplotlib==3.10.8
+yfinance==0.2.40

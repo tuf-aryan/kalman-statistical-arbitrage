@@ -1,0 +1,318 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{graphicx}
+\usepackage{caption,subcaption}
+\usepackage[authoryear,round]{natbib}
+\usepackage{hyperref}
+\usepackage{enumitem}
+\usepackage{float}
+
+\input{numbers.tex}
+\graphicspath{{../results/figures/}}
+\newcommand{\fig}[2][0.85\textwidth]{\includegraphics[width=#1]{#2}}
+
+\title{\textbf{Static, Rolling, and Kalman-Filter Hedge Ratios for Pairs Trading:\\
+An Out-of-Sample Comparison on Indian Banking Equities}}
+\author{Aryan Gupta \\ \small Code and data: \url{https://github.com/tuf-aryan/Kalman_stat_arb}}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent
+We compare three ways of estimating the hedge ratio in a pairs-trading strategy -- a static OLS fit, a rolling-window OLS fit, and a Kalman filter -- on \NTickers{} Indian banking stocks. We split the sample into a formation period (\DataStart{} to \FormationEnd{}), used for pair selection and model fitting, and a test period (\TestStart{} onward), used only for evaluation. Of the \NPairs{} candidate pairs, none survives a Benjamini--Hochberg correction at $q=\FDRq{}$, so we carry forward the pair with the lowest formation-period $p$-value (\PairY{} vs.\ \PairX{}, $p=\BestP{}$, BH-adjusted $q=\BestQ{}$) as an exploratory case study. Out of sample, the Kalman spread has the strongest stationarity diagnostics of the three (ADF statistic $=\ADFKalman{}$, half-life $=\HLKalman{}$ days, versus $\ADFStatic{}$ and $\HLStatic{}$ days for static OLS), but the weakest trading results: net of a \CostBps{} bp transaction cost, static OLS earns a Sharpe ratio of \NetSharpeStatic{}, rolling OLS \NetSharpeRolling{}, and the Kalman strategy \NetSharpeKalman{}. Across the \SensNSpecs{} distinct one-at-a-time sensitivity specifications (transaction cost, z-score window, entry and exit thresholds), the Kalman strategy remains the weakest of the three (its net Sharpe ratio is negative in all \SensKalmanNeg{}), although the relative ordering of static and rolling OLS varies with the parameter choice. In this exploratory sample, a statistically more stationary spread was not a more profitable one.
+
+\medskip
+\noindent\textbf{Keywords:} statistical arbitrage; pairs trading; cointegration; Kalman filter; mean reversion.\\
+\textbf{JEL:} G11, G12, G14, C32, C58.
+\end{abstract}
+
+\section{Introduction}
+
+Pairs trading buys a relatively cheap security and sells a relatively expensive one when the spread between them widens, and closes the position when the spread reverts \citep{gatev2006pairs}. The strategy relies on two things: a stationary linear combination of the two prices, i.e.\ cointegration \citep{engle1987co}, and a correctly estimated hedge ratio.
+
+The usual approach estimates the hedge ratio with OLS on a formation window and holds it fixed. This is fragile, since the true relationship between two stocks can drift over time. A rolling OLS re-estimates the hedge ratio on a moving window, which adapts but is noisy and reacts abruptly when an old observation drops out of the window. A Kalman filter treats the hedge ratio as a latent state that evolves smoothly and updates it recursively using only past information \citep{kalman1960new,elliott2005pairs}.
+
+This raises the question we study: does letting the hedge ratio adapt more (Kalman) or less (rolling, static) actually help, once we evaluate everything honestly out of sample and net of transaction costs? We are not proposing a new algorithm -- all three methods are standard -- we are asking an empirical question about whether more statistical sophistication pays off in this specific setting.
+
+\textbf{Research question.} Does dynamic Kalman-filter hedge-ratio estimation improve the statistical properties of a cointegrated spread, and does this improvement translate into superior out-of-sample trading performance after transaction costs, relative to static and rolling OLS?
+
+We use four Indian banking stocks listed on the NSE (HDFC Bank, ICICI Bank, Kotak Mahindra Bank, State Bank of India). Banking stocks share exposure to interest rates and credit cycles, which makes a cointegrated relationship plausible, while differences in ownership and balance-sheet quality make that relationship time-varying -- a reasonable setting to ask whether a dynamic hedge ratio helps.
+
+\textbf{Contribution.} We provide a controlled, out-of-sample comparison of the three hedge-ratio methods on the same pair, same signal rule, and same transaction-cost assumption, with pair selection frozen before the test period is touched. We separately evaluate spread stationarity and trading profitability, since the two need not move together, and our results show a case where they do not.
+
+The rest of the paper: Section \ref{sec:lit} reviews related work, Section \ref{sec:data} describes the data, Section \ref{sec:method} the methodology, Section \ref{sec:results} the results (including the sensitivity analysis), Section \ref{sec:disc} the discussion, Section \ref{sec:lim} the limitations, Section \ref{sec:concl} concludes, and Section \ref{sec:future} outlines future work.
+
+\section{Literature Review}\label{sec:lit}
+
+\citet{gatev2006pairs} document that a distance-based pairs strategy on U.S.\ equities earned significant excess returns over 1962--2002. \citet{do2006pairs} give a theoretical asset-pricing motivation for pairs trading, and \citet{avellaneda2010statistical} study a factor-residual version and its declining profitability over time as the strategy became more widely used.
+
+\citet{engle1987co} introduce cointegration and the two-step residual test used here; \citet{dickey1979distribution} provide the underlying unit-root test. \citet{johansen1991estimation} extends this to multivariate systems, which we do not need with only two assets. \citet{mackinnon1996numerical} gives critical values for the Engle--Granger statistic. A known issue with Engle--Granger is that the result can depend on which variable is on the left-hand side; we fix this choice before looking at the data (Section \ref{sec:method}).
+
+\citet{elliott2005pairs} model a mean-reverting spread in a state-space framework, which motivates using a Kalman filter for the hedge ratio; \citet{hamilton1994time} and \citet{durbin2012time} are standard references for the filter itself, and \citet{chan2013algorithmic} is a widely read practitioner text that popularized this use. We are not aware of many studies that compare static, rolling and Kalman hedge ratios side by side, out of sample, with transaction costs, specifically on Indian banking equities.
+
+Testing many pairs and parameter combinations creates a multiple-testing problem. \citet{harvey2016and} argue for stricter significance hurdles in empirical asset pricing, and we apply a Benjamini--Hochberg correction to our six pair tests (Section \ref{sec:bh}) for the same reason. \citet{bailey2014deflated} propose the deflated Sharpe ratio for a related purpose; we do not compute it here since our sensitivity checks are small and one-parameter-at-a-time rather than a large grid search, but flag it as a natural extension (Section \ref{sec:future}).
+
+\citet{brunnermeier2009market} and \citet{nagel2012evaporating} link arbitrage profitability to market liquidity, and \citet{amihud2002illiquidity} give a standard illiquidity proxy; these motivate the extension we outline, but do not implement, at the end of Section \ref{sec:future}. \citet{aghbabali2025dynamic} discuss reproducible empirical finance, which is the spirit in which this project's code and paper are built together.
+
+\section{Data and Experimental Design}\label{sec:data}
+
+We use daily adjusted closing prices for \NTickers{} banks listed on the NSE (Table \ref{tab:universe}) from \DataStart{} to \DataEnd{}, downloaded from Yahoo Finance with \texttt{yfinance} (\texttt{auto\_adjust=True}, so prices are adjusted for splits and dividends). Missing values are forward-filled for at most 5 trading days; any day still missing a price is dropped, leaving \NFormation{} formation-period and \NTest{} test-period trading days.
+
+\begin{table}[H]
+\centering
+\caption{Stock universe}
+\label{tab:universe}
+\begin{tabular}{ll}
+\toprule
+Ticker & Bank \\
+\midrule
+HDFCBANK & HDFC Bank \\
+ICICIBANK & ICICI Bank \\
+KOTAKBANK & Kotak Mahindra Bank \\
+SBIN & State Bank of India \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+We split the sample once, before doing anything else: the \textbf{formation period} (\DataStart{} to \FormationEnd{}, \NFormation{} days) is used for pair selection, cointegration testing, and fitting the static-OLS and Kalman-filter parameters; the \textbf{test period} (\TestStart{} onward, \NTest{} days) is used only to evaluate trading performance. No parameter, threshold, or pair choice is changed after looking at test-period results.
+
+\section{Methodology}\label{sec:method}
+
+All cointegration testing and hedge-ratio estimation is done on \emph{log} prices, $y_t = \ln P^y_t$, $x_t = \ln P^x_t$; portfolio returns (Section \ref{sec:port}) are computed from simple returns of the actual prices, since that is what a trader's P\&L is denominated in.
+
+\subsection{Candidate Pair Universe}
+With four stocks there are $\binom{4}{2}=6$ possible pairs. We test all six, not a subset chosen by hand.
+
+\subsection{Formation/Test Split}
+See Section \ref{sec:data}. The split is fixed before any pair or parameter selection.
+
+\subsection{Engle--Granger Cointegration}\label{sec:eg}
+For each pair we fit $y_t = \alpha + \beta x_t + u_t$ by OLS on the formation sample and test the residuals $\hat u_t$ for a unit root with the augmented Dickey--Fuller regression
+\begin{equation}
+\Delta \hat u_t = \gamma \hat u_{t-1} + \sum_{j=1}^{p}\phi_j \Delta \hat u_{t-j} + \varepsilon_t,
+\end{equation}
+with lag length $p$ chosen by AIC (every candidate lag is scored on a common sample); the statistic is the $t$-ratio on $\gamma$ (no constant in the residual regression). All tests are implemented in a single self-contained module (\texttt{utils.py}); the project does not use \texttt{statsmodels} or \texttt{scipy}, and there is no alternative code path. $p$-values are \textbf{Monte-Carlo $p$-values}: the null distribution of the statistic is simulated from $N_{\text{sim}}=\NSim{}$ pairs of independent Gaussian random walks of the same length (fixed seed $\Seed{}$), and the $p$-value is the fraction of simulated statistics that are at least as negative as the observed one. The resolution of this estimator is $1/N_{\text{sim}}=\MCResolution{}$, so an estimate of zero is reported as $p<\MCResolution{}$, not as a zero probability. These are \emph{not} the MacKinnon response-surface $p$-values that \texttt{statsmodels} reports and are not numerically identical to them. As a one-off check outside the repository, we compared the test statistics with \texttt{statsmodels} and found agreement in every case (the six Engle--Granger statistics and the three ADF statistics); in that check the Monte-Carlo $p$-values were somewhat larger than the \texttt{statsmodels} ones for all six pair tests, which does not change which pair has the lowest $p$-value or the finding that no pair survives the correction. The ordering $(y,x)$ within each pair is fixed alphabetically before testing, so we never pick the orientation that happens to give the smaller $p$-value.
+
+\subsection{Multiple Testing}\label{sec:bh}
+Testing six pairs and picking the smallest $p$-value inflates the chance of a false positive. We apply the Benjamini--Hochberg procedure at $q=\FDRq{}$ to the six formation-period $p$-values. If no pair survives this correction, we still proceed with the lowest-$p$ pair for the rest of the paper, but call the analysis \textbf{exploratory} rather than confirmatory, and say so wherever that pair's results are discussed.
+
+\subsection{Static OLS}\label{sec:static}
+We fit $\hat\alpha,\hat\beta$ once, on the formation sample only, and hold them fixed for the entire test period:
+\begin{equation}
+s_t^{\text{static}} = y_t - \hat\alpha - \hat\beta x_t.
+\end{equation}
+For our pair, $\hat\alpha=\StaticAlpha{}$, $\hat\beta=\StaticBeta{}$.
+
+\subsection{Rolling OLS}\label{sec:rolling}
+We re-fit $(\hat\alpha_t,\hat\beta_t)$ every day on the trailing $W=\RollWindow{}$-day window ending the day before, so no information from day $t$ enters day $t$'s hedge ratio:
+\begin{equation}
+s_t^{\text{roll}} = y_t - \hat\alpha_{t-1} - \hat\beta_{t-1} x_t.
+\end{equation}
+
+\subsection{Kalman Filter}\label{sec:kalman}
+We model the hedge ratio and intercept as a state $\theta_t = (\beta_t,\alpha_t)^\top$ following a random walk, observed through $y_t = H_t\theta_t+\varepsilon_t$ with $H_t=(x_t,1)$:
+\begin{align}
+\text{prior/prediction:}\quad & \hat\theta_{t|t-1}=\hat\theta_{t-1|t-1}, \quad P_{t|t-1}=P_{t-1|t-1}+Q,\\
+\text{innovation:}\quad & e_t = y_t - H_t\hat\theta_{t|t-1}, \quad S_t = H_tP_{t|t-1}H_t^\top+R,\\
+\text{Kalman gain:}\quad & K_t = P_{t|t-1}H_t^\top S_t^{-1},\\
+\text{posterior:}\quad & \hat\theta_{t|t}=\hat\theta_{t|t-1}+K_te_t, \quad P_{t|t}=(I-K_tH_t)P_{t|t-1}.
+\end{align}
+We initialise $\hat\theta_{0|0}$ from OLS on the first \KalmanBurnin{} formation observations, and set $R$ to the residual variance of the formation-sample static OLS fit and $Q=\frac{\delta}{1-\delta}I_2$ with $\delta=\KalmanDelta{}$; both are calibrated on formation data only, never on the test period. \textbf{The spread we trade is the prior-based innovation $e_t$}, since it is computed from the prior state $\hat\theta_{t|t-1}$, before $\theta_t$ is updated with day $t$'s observation. Day $t$'s prices enter $e_t$ only as the quantity being predicted, exactly as they enter the static and rolling spreads at the close of day $t$; the resulting position is executed on day $t+1$, and the hedge ratio used to size the position on day $t+1$ is the prior $\hat\beta_{t+1|t}$, which under the random-walk state equation equals the posterior at the close of day $t$ and contains no information from day $t+1$. The hedge-ratio path plotted in Figure \ref{fig:beta} is the prior $\hat\beta_{t|t-1}$, i.e.\ the value actually used to size the position; the posterior series is stored in the output file but is not used to build the traded spread or to size positions. We do not call the posterior residual an innovation, since only the prior-based quantity has that property.
+
+\subsection{Spread Construction}
+Each method produces a spread series $s_t\in\{s_t^{\text{static}},s_t^{\text{roll}},e_t\}$, all built causally: nothing at date $t$ uses information from after date $t$.
+
+\subsection{Z-score Signal}\label{sec:z}
+For each spread we compute a rolling z-score using the $L=\ZWindow{}$ days \emph{before} $t$, so today's value never enters its own normalisation:
+\begin{equation}
+z_t = \frac{s_t - \mu_{t-1}^{(L)}}{\sigma_{t-1}^{(L)}}.
+\end{equation}
+The trading rule (identical for all three spreads) is: enter long the spread when $z_t<-\ZEntry{}$, enter short when $z_t>\ZEntry{}$, exit when $|z_t|<\ZExit{}$, and stop out when $|z_t|>\ZStop{}$. A position decided at the close of day $t$ is applied starting day $t+1$ (implemented as \texttt{position.shift(1)}), so there is no same-day execution.
+
+\subsection{Portfolio Construction}\label{sec:port}
+Given a lagged position $\pi_{t-1}\in\{-1,0,1\}$ and the hedge ratio $\beta_{t-1}$ known at that point, we weight the two legs as
+\begin{equation}
+w^y_t = \frac{\pi_{t-1}}{1+|\beta_{t-1}|}, \qquad w^x_t = \frac{-\pi_{t-1}\beta_{t-1}}{1+|\beta_{t-1}|},
+\end{equation}
+the same normalisation for all three methods, so the only thing that differs between them is $\beta$. The portfolio return on day $t$ uses \emph{simple} returns of the actual prices,
+\begin{equation}
+r_t = w^y_t\left(\frac{P^y_t}{P^y_{t-1}}-1\right) + w^x_t\left(\frac{P^x_t}{P^x_{t-1}}-1\right).
+\end{equation}
+Equivalently, $r_t=\pi_{t-1}\,(r^y_t-\beta_{t-1}r^x_t)/(1+|\beta_{t-1}|)$. While a position is open, gross exposure $|w^y|+|w^x|$ equals exactly one for all three methods, so they are compared on the same exposure convention. The legs are not dollar-neutral in a strict sense (net exposure is $(1-\beta)/(1+|\beta|)$ times the position); this is a simple, consistent convention rather than a claim of exact market neutrality.
+
+\subsection{Transaction Costs}
+We charge a proportional cost on actual turnover, the change in leg weights from one day to the next:
+\begin{equation}
+\text{cost}_t = c \cdot \left(|w^y_t-w^y_{t-1}| + |w^x_t-w^x_{t-1}|\right), \qquad c = \CostBps{}\text{ bps}.
+\end{equation}
+This is an assumed, illustrative cost, meant to stand in for brokerage, exchange fees, and slippage together, not an itemised estimate of each.
+
+\subsection{Performance Metrics}
+For net daily returns $r$ we report annualised return $\mu_a=252\bar r$, annualised volatility $\sigma_a=\sqrt{252}\,\sigma_r$, Sharpe ratio $\mu_a/\sigma_a$ (risk-free rate 0, since the spread portfolio is self-financing), Sortino ratio (annualised return over the downside deviation $\sqrt{252}\sqrt{\overline{\min(r,0)^2}}$ around a zero target, averaged over all days), maximum drawdown of the compounded wealth path (starting from a wealth of one), the Calmar ratio, and cumulative return. Trade statistics are computed per completed round trip: a trade's P\&L is the sum of daily net portfolio returns from the first day the position is held through the day it is closed, so both the entry cost and the exit cost are included; hit rate is the share of trades with positive net P\&L, profit factor is the sum of winning trade P\&L over the absolute sum of losing trade P\&L, and total turnover is the sum of daily absolute weight changes over the test period. Trade P\&L is additive in portfolio-return units and is not compounded. Because each strategy starts and ends flat, the trade P\&Ls sum exactly to the sum of daily net returns (checked automatically).
+
+\section{Empirical Results}\label{sec:results}
+
+\subsection{Pair Screening}
+Table \ref{tab:coint} reports the Engle--Granger results for all six pairs on the formation sample.
+
+\begin{table}[H]
+\centering
+\caption{Engle--Granger cointegration tests, formation period}
+\label{tab:coint}
+\input{../results/tables/cointegration.tex}
+\end{table}
+
+\subsection{Multiple-Testing Result}\label{sec:bhres}
+The lowest raw $p$-value is $\BestP{}$ (\PairY{} vs.\ \PairX{}); after Benjamini--Hochberg correction its adjusted $q$-value is \BestQ{}, above the $\FDRq{}$ threshold, so \emph{no pair survives the correction for testing six of them} (the smallest $q$-value among all six pairs is \MinQ{}; \NSurviveBH{} of \NPairs{} pairs have $q<\FDRq{}$). We carry this pair forward as an exploratory case study, not as confirmed evidence of a tradable relationship.
+
+\subsection{Hedge-Ratio Dynamics}
+Figure \ref{fig:beta} shows the three hedge ratios over the test period. The static ratio is flat by construction (\StaticBeta{}). The rolling estimate is the most variable: it ranges from \RollBetaMin{} to \RollBetaMax{}, with a mean absolute daily change of \RollBetaMAD{}. The Kalman estimate is much smoother (mean absolute daily change \KalBetaMAD{}) and stays in a narrow band between \KalBetaMin{} and \KalBetaMax{}, well below the static formation-period ratio. The Kalman state also contains an intercept that moves with the slope, so the Kalman spread is not simply the static spread with a different slope.
+
+\begin{figure}[H]
+\centering
+\fig{fig2_hedge_ratio_comparison.png}
+\caption{Hedge ratio over the test period, \PairY{} vs.\ \PairX{}.}
+\label{fig:beta}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\fig{fig3_spreads_comparison.png}
+\caption{The three spreads over the test period.}
+\label{fig:spreads}
+\end{figure}
+
+\subsection{Spread Stationarity}\label{sec:stat}
+Table \ref{tab:stat} compares the three spreads over the test period only. Under the project's implementation, the Kalman spread has the most negative ADF statistic ($\ADFKalman{}$) and by far the shortest half-life (\HLKalman{} days), followed by the rolling spread ($\ADFRolling{}$; \HLRolling{} days); the static spread has a weak ADF statistic ($\ADFStatic{}$, Monte-Carlo $p=\ADFpStatic{}$) and a long half-life (\HLStatic{} days), and the KPSS test \KPSSRejectStatic{} stationarity for it at the 5\% level (statistic $\KPSSStatic{}$ against a critical value of \KPSSCrit{}), whereas it \KPSSRejectRolling{} it for the rolling and Kalman spreads. ADF $p$-values reported as $<\MCResolution{}$ lie below the resolution of the $N_{\text{sim}}=\NSim{}$ Monte-Carlo simulation and should not be read as zero. These are statements about statistical stationarity of the constructed spread; a more negative ADF statistic does not by itself imply a more profitable strategy.
+
+\begin{table}[H]
+\centering
+\caption{Spread stationarity, test period}
+\label{tab:stat}
+\input{../results/tables/stationarity.tex}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\fig{fig4_adf_halflife.png}
+\caption{ADF statistic and half-life by method, test period.}
+\label{fig:adf}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\fig{fig5_zscore_signals.png}
+\caption{Kalman spread z-score with entry and stop-loss levels, test period.}
+\label{fig:zscore}
+\end{figure}
+
+So on the statistical dimension of the research question the Kalman spread scores highest in this sample. Stationarity is a different question from profitability, which we turn to next.
+
+\subsection{Out-of-Sample Trading Performance}\label{sec:perf}
+Table \ref{tab:perf} reports net-of-cost performance, and Table \ref{tab:perfgross} compares gross and net side by side. Among the three strategies, static OLS has the highest baseline net Sharpe ratio (\NetSharpeStatic{}), rolling OLS is second (\NetSharpeRolling{}), and the Kalman filter is negative (\NetSharpeKalman{}); the Sortino ratios are \NetSortinoStatic{}, \NetSortinoRolling{} and \NetSortinoKalman{}, and the maximum drawdowns are \NetMDDStatic{}\%, \NetMDDRolling{}\% and \NetMDDKalman{}\%. The Kalman spread has the strongest stationarity diagnostics of the three (Section \ref{sec:stat}), yet in this sample that statistical property did not translate into better economic performance. The buy-and-hold row (the y-leg stock alone) is shown for context only; it is not a market-neutral benchmark.
+
+\begin{table}[H]
+\centering
+\caption{Net-of-cost performance, test period}
+\label{tab:perf}
+\input{../results/tables/performance.tex}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Gross vs.\ net performance}
+\label{tab:perfgross}
+\input{../results/tables/performance_gross_net.tex}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\fig{fig6_equity_curves.png}
+\caption{Equity curves, net of transaction costs.}
+\label{fig:equity}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\fig{fig7_drawdowns.png}
+\caption{Drawdowns, net of transaction costs.}
+\label{fig:dd}
+\end{figure}
+
+Table \ref{tab:trades} reports trade-level statistics. The Kalman strategy trades more often (\NTradesKalman{} completed trades vs.\ \NTradesStatic{} for static OLS and \NTradesRolling{} for rolling OLS), holds each position for a shorter time (\AvgHoldKalman{} vs.\ \AvgHoldStatic{} days for static OLS) and has higher total turnover (\TurnoverKalman{} vs.\ \TurnoverStatic{}), so transaction costs weigh more on it. Its gross Sharpe ratio is already \GrossSharpeKalman{}, so costs are not the only reason for its net result. Its hit rate (\HitRateKalman{}\%) is close to a coin flip and its profit factor (\ProfitFactorKalman{}) is below one, meaning that in this sample losing trades outweighed winning trades in total; the corresponding hit rates and profit factors are \HitRateStatic{}\% and \ProfitFactorStatic{} for static OLS and \HitRateRolling{}\% and \ProfitFactorRolling{} for rolling OLS.
+
+\begin{table}[H]
+\centering
+\caption{Trade statistics, test period. Trade P\&L is in portfolio-return units (sum of daily net returns from the first held day to the closing day, both costs included); total turnover is the sum of daily absolute weight changes.}
+\label{tab:trades}
+\resizebox{\textwidth}{!}{\input{../results/tables/trade_stats.tex}}
+\end{table}
+
+\subsection{Transaction-Cost Sensitivity}
+Figure \ref{fig:sens}(top-left) shows net Sharpe as we vary the assumed cost from 0 to 20 bps. Static and rolling OLS have a positive net Sharpe ratio at every cost level in this range. The Kalman strategy has a negative Sharpe ratio (\KalmanGrossSharpe{}) even before transaction costs, so there is no positive transaction-cost level at which it transitions from profitable to unprofitable under this specification; every cost level we tested only lowers it further.
+
+\subsection{Parameter Sensitivity}\label{sec:sens}
+Figure \ref{fig:sens} also shows net Sharpe as we vary the z-score window (40, 60, 120 days), the entry threshold (1.5, 2.0, 2.5), and the exit threshold (0, 0.5, 1.0), one at a time, holding the others at the baseline values chosen before we ever looked at test-period performance. Because the baseline appears in every sweep, this gives \SensNSpecs{} distinct specifications per method. Static OLS has a positive net Sharpe ratio in \SensStaticPos{} of them and rolling OLS in \SensRollingPos{}. The Kalman strategy has a negative net Sharpe ratio in \SensKalmanNeg{} of \SensNSpecs{} (ranging from \KalmanSensMin{} to \KalmanSensMax{}) and is the lowest of the three in \SensKalmanWeakest{} of \SensNSpecs{}. The ordering of static and rolling OLS is not stable: static OLS is higher in \SensStaticGtRolling{} of \SensNSpecs{} specifications, while rolling OLS is higher in \SensRollingGtStatic{} (\SensRollingGtStaticWhere{}). The Kalman strategy therefore remains the weakest of the three across the tested specifications, although the relative ordering of static and rolling OLS varies with the parameter choice. The sweeps are one-at-a-time, not a full grid.
+
+\begin{figure}[H]
+\centering
+\fig{fig8_sensitivity.png}
+\caption{Net Sharpe ratio sensitivity to transaction cost, z-score window, and entry/exit thresholds.}
+\label{fig:sens}
+\end{figure}
+
+\section{Discussion}\label{sec:disc}
+
+Statistical spread quality and economic trading performance are different questions, and in this sample the results separate them: the Kalman spread has the strongest stationarity diagnostics of the three (Section \ref{sec:stat}), while the Kalman strategy has the weakest net-of-cost trading performance of the three, and a negative Sharpe ratio even before costs (Section \ref{sec:perf}). One possible reading, which we did not test, is that the Kalman spread is a one-step-ahead prediction error from a state (slope and intercept) that keeps re-centring itself, which can mechanically produce a spread with much smaller variance (standard deviation \StdKalman{} versus \StdStatic{} for the static spread) and faster mean reversion while leaving less of the original deviation for a trading rule to capture. This is a conjecture; we do not claim it is the only possible explanation, and we do not claim the result would hold on a different pair, universe, or period -- only that on this specific exploratory pair, over this specific test period, it is what we observe.
+
+We deliberately do not claim ``more stationary means more profitable,'' nor the reverse; the summary of our results is that, in this sample, the Kalman hedge ratio came with stronger stationarity diagnostics but not with better net trading performance. More generally, in this sample the more adaptive specifications did not improve net-of-cost performance: both time-varying hedge ratios (rolling OLS and Kalman) had a lower baseline net Sharpe ratio than the static hedge ratio.
+
+\section{Limitations}\label{sec:lim}
+
+(i) The main result rests on a single pair that does not itself survive multiple-testing correction (Section \ref{sec:bhres}); it is a case study, not an estimate of an average effect across Indian banking stocks. (ii) The universe is small (4 stocks, 6 pairs); a larger universe with a properly powered multiple-testing correction might behave differently. (iii) The five-year test window, while it spans the COVID-19 crash, still contains few genuinely independent market regimes. (iv) Daily closing prices cannot capture intraday execution risk, which matters more for the Kalman strategy's shorter average holding period. (v) Short selling in the Indian cash market is restricted in practice, so implementing the short leg would likely require futures, which we do not model. (vi) The transaction-cost assumption (\CostBps{} bps) is a single illustrative number, not an itemised estimate of brokerage, taxes, and slippage. (vii) Our sensitivity checks vary one parameter at a time rather than searching a full grid, so we cannot rule out that some untested combination of parameters would change the results; among the \SensNSpecs{} specifications we did run, the ordering of static and rolling OLS changed in one (\SensRollingGtStaticWhere{}). (viii) The rolling-OLS beta is unregularised and is occasionally noisy: it is negative on \RollBetaNeg{} of \RollBetaNTest{} test-period days (\RollBetaNegPct{}\%) and exceeds 1.8 on \RollBetaAbsGtTwo{} of them (range \RollBetaMin{} to \RollBetaMax{}); we do not clip or constrain it. This is an expected property of an unconstrained 60-day covariance/variance estimator on two correlated but imperfectly cointegrated series, not a data error, but it is a real source of instability in that benchmark that we report rather than smooth over. (ix) The $p$-values in this paper come from a project-specific Monte-Carlo procedure with $N_{\text{sim}}=\NSim{}$ draws, not from \texttt{statsmodels}; they are close to, but not identical with, standard response-surface $p$-values, and their resolution is limited to $\MCResolution{}$. (x) Historical backtests, even honestly out-of-sample ones, cannot guarantee future performance.
+
+\section{Conclusion}\label{sec:concl}
+
+On a single Indian banking pair that does not survive multiple-testing correction, evaluated with a genuine formation/test split, causal signals, and an explicit transaction-cost model, the Kalman filter has the strongest stationarity diagnostics of the three hedge-ratio methods we compare but the weakest net-of-cost trading results. Static OLS has the highest baseline net Sharpe ratio (\NetSharpeStatic{}), rolling OLS is second (\NetSharpeRolling{}), and the Kalman filter is negative (\NetSharpeKalman{}). Across the tested sensitivity specifications the Kalman strategy remains the weakest of the three, although the relative ordering of static and rolling OLS varies with the parameter choice. In this sample, the more adaptive specifications did not improve net-of-cost performance (both time-varying hedge ratios had a lower baseline net Sharpe ratio than the static one) -- a negative result on one exploratory pair and one test period, and a reminder that statistical stationarity is not automatically economic profitability.
+
+\section{Future Work}\label{sec:future}
+
+A larger universe with a properly powered multiple-testing correction would let us check whether this result is pair-specific. The proposed extension below outlines, but does not implement, a link between arbitrage performance and market liquidity/volatility that would be a natural next step. A full grid search over parameters combined with a deflated Sharpe ratio \citep{bailey2014deflated} would give a stricter test of the sensitivity results in Section \ref{sec:sens}. Finally, a mean-reverting (rather than random-walk) state transition in the Kalman filter could be tested as an alternative Kalman specification; we have not evaluated it and make no claim about its effect.
+
+\subsection*{Liquidity and Market-Conditions Extension (proposed, not implemented)}
+Statistical arbitrageurs supply liquidity, and their capital tends to be scarcest exactly when spreads are widest \citep{brunnermeier2009market,nagel2012evaporating}. Three testable hypotheses for future work: (H1) lower stock liquidity is associated with slower mean reversion; (H2) cointegration breaks down more often during high-volatility periods; (H3) the performance gap between Kalman and static OLS documented here varies with market-wide volatility and liquidity. A first test could regress daily strategy returns on lagged India VIX and an Amihud illiquidity measure \citep{amihud2002illiquidity} with Newey--West standard errors. \textbf{No code implementing this exists in the repository; nothing above should be read as an empirical finding.}
+
+\section*{Data and Code Availability}
+All code is available at \url{https://github.com/tuf-aryan/Kalman_stat_arb}. Running \texttt{python run\_all.py} regenerates all analysis outputs (CSV files, tables, figures, and \texttt{paper/numbers.tex}) from the cached price file and \texttt{params.py}, runs an independent re-computation of the headline numbers, and runs the unit tests; it does not compile this PDF, which is built separately with \texttt{pdflatex}/\texttt{bibtex} in the \texttt{paper/} directory. Every number in the text is a macro read from \texttt{numbers.tex}, and tables and figures are read from \texttt{results/}.
+
+\bibliographystyle{apalike}
+\bibliography{references}
+
+\appendix
+\section*{Appendix}
+
+\subsection*{A.1 Kalman Filter Implementation Notes}
+\begin{itemize}[nosep]
+  \item $\hat\theta_{0|0}$ and $P_{0|0}$ are set from OLS on the first \KalmanBurnin{} \emph{formation} observations.
+  \item The traded spread is always the prior-based innovation $e_t$ (never the posterior residual $y_t - H_t\hat\theta_{t|t}$); the hedge ratio used for sizing (and plotted in Figure \ref{fig:beta}) is the prior $\hat\beta_{t|t-1}$, not the posterior.
+  \item $Q$ and $R$ are fixed once, from formation data, and never re-tuned using test-period performance.
+\end{itemize}
+
+\subsection*{A.2 Data Leakage Checklist}
+\begin{itemize}[nosep]
+  \item Pair selection: formation-period $p$-values only (Section \ref{sec:bh}).
+  \item Static OLS: formation-period fit only, frozen for the test period (Section \ref{sec:static}).
+  \item Rolling OLS: window always ends the day before $t$ (Section \ref{sec:rolling}).
+  \item Kalman filter: $Q$, $R$, and the initial state calibrated on formation data only; the recursion itself uses only past observations at each step (Section \ref{sec:kalman}).
+  \item Z-score: uses the $L$ days \emph{before} $t$, never including $t$ itself (Section \ref{sec:z}).
+  \item Position: signal from day $t$ is applied starting day $t+1$ (Section \ref{sec:z}).
+  \item Sensitivity checks (Section \ref{sec:sens}): baseline parameters were fixed before we ran the test-period backtest for the first time; the one-at-a-time sensitivity sweeps are reported for diagnostic purposes and were never used to change the primary result.
+\end{itemize}
+
+\end{document}
