@@ -1,19 +1,8 @@
-# src/signal_generation.py
+# Convert each spread into a trading position using the same z-score
+# rule and thresholds.
 #
-# Turns each spread into a trading position using a z-score rule. The same
-# rule (same window, same thresholds) is applied to all three spreads so
-# the comparison in the next steps is fair.
-#
-# Z-score at time t only uses information up to t-1 (mean/std of the
-# PREVIOUS z_window days), so today's spread value cannot leak into its
-# own normalization.
-#
-# Position rule:
-#   enter long  when z < -z_entry   (spread is unusually low  -> buy it)
-#   enter short when z >  z_entry   (spread is unusually high -> sell it)
-#   exit        when |z| < z_exit   (spread has reverted back toward zero)
-#   stop-loss   when |z| > z_stop   (spread kept moving away from us)
-
+# The z-score at t uses the previous z_window observations to avoid
+# look-ahead.
 import os
 import sys
 import numpy as np

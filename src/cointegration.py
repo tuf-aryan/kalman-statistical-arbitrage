@@ -1,12 +1,7 @@
-# src/cointegration.py
+# Test all six pairs using the formation period only.
+# The test is run on log prices.
 #
-# Tests all 6 possible pairs from our 4 stocks for cointegration, using
-# ONLY the formation period (2015-2019). We work with log prices, since
-# that's the standard convention for this kind of test (price ratios /
-# percentage moves matter more than rupee differences).
-#
-# We pick the pair with the lowest formation-period p-value. This is
-# decided BEFORE we ever look at the test period.
+# Select the pair with the lowest formation-period p-value.
 
 import os
 import sys

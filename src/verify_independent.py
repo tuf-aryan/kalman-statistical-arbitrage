@@ -1,11 +1,8 @@
-# src/verify_independent.py
-#
-# Independent re-computation of the headline numbers. Nothing here imports
-# the project's metric / backtest / filter code: everything is rebuilt from
-# raw prices, saved positions and saved betas with a DIFFERENT code path
-# (plain numpy loops and array algebra instead of pandas rolling/diff/
-# cumprod). Every check must match the generated outputs or the script
-# exits with an error, which makes run_all.py fail.
+
+# Independently recompute the main results.
+# This script does not import the project's backtest or metric functions.
+# The checks compare the recomputed values with the saved outputs.
+# A mismatch causes the script to fail.
 
 import os
 import sys

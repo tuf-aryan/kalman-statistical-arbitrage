@@ -1,12 +1,6 @@
-# src/robustness.py
-#
-# Small sensitivity checks around the baseline parameters that were fixed
-# before we ever looked at test-period performance (z_window=60, entry=2.0,
-# exit=0.5, cost=10bps). We vary one parameter at a time and re-run the
-# same backtest logic used in backtesting.py, so we can see whether the
-# Kalman-is-weakest pattern (and the static-vs-rolling ordering) depends on
-# these specific choices. This is a diagnostic, not a search for better
-# numbers -- we never touch the primary result based on what we see here.
+# Sensitivity checks around the baseline parameters.
+# Change one parameter at a time and rerun the backtest.
+# These results are reported separately from the baseline results.
 
 import os
 import sys

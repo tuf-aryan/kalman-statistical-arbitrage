@@ -1,9 +1,5 @@
-# src/rolling_ols.py
-#
-# Re-estimates the hedge ratio every day using a trailing window of the
-# last `roll_window` days. The window always ends at t-1, so today's price
-# never affects today's hedge ratio (no look-ahead).
-
+# Re-estimate the hedge ratio each day using the previous roll_window days.
+# The window ends at t-1 to avoid look-ahead.
 import os
 import sys
 import numpy as np

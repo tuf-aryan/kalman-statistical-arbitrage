@@ -1,8 +1,5 @@
-# src/data_collection.py
-#
-# Downloads daily adjusted close prices for our four banks and saves them
-# to data/prices.csv. If that file already exists with the right columns
-# we just reuse it instead of hitting Yahoo Finance again.
+# Download daily adjusted close prices and save them to data/prices.csv.
+# Use the existing file if the required columns are already present.
 
 import os
 import sys
@@ -31,9 +28,8 @@ if need_download:
     prices = pd.DataFrame({t: raw[t]["Close"] for t in tickers})
     prices.index = pd.to_datetime(prices.index)
     prices = prices.sort_index()
-
-# forward fill small gaps (holidays that don't line up across exchanges etc.)
-# then drop any day that still has a missing price
+    
+# Fill small gaps and remove rows that still contain missing prices.
 prices = prices.ffill(limit=5).dropna()
 prices = prices[tickers]
 

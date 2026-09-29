@@ -5,16 +5,10 @@
 # State:        theta_t = [beta_t, alpha_t]'        (random walk)
 # Observation:  y_t = H_t theta_t + e_t,  H_t = [x_t, 1]
 #
-# At each step we keep the prior/predicted state separate from the
-# posterior (updated) state, and we trade the SPREAD based on the
-# PRIOR prediction (the one-step-ahead innovation e_t = y_t - H_t theta_(t|t-1)):
-# the state used to form it has not yet been updated with today's observation.
-# The plotted / traded hedge ratio path is the PRIOR beta_(t|t-1); the
-# posterior columns are saved for reference only and are not used to build the
-# traded spread or to size positions.
-#
-# Q and R (the two noise variances) are calibrated using formation data
-# only, exactly like the static and rolling models.
+# Keep the prior and posterior states separate.
+# The traded spread uses the prior state, so today's observation is
+# not used in the same day's hedge ratio.
+# Posterior values are saved for reference only.
 
 import os
 import sys

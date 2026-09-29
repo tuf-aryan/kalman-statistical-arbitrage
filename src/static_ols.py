@@ -1,9 +1,5 @@
-# src/static_ols.py
-#
-# Fits the static hedge ratio  y = alpha + beta*x  using ONLY the formation
-# period, then keeps alpha/beta fixed for the rest of the sample (including
-# the test period). This is the simplest possible benchmark.
-
+# Fit the static hedge ratio using the formation period only.
+# Keep alpha and beta fixed during the test period.
 import os
 import sys
 import numpy as np

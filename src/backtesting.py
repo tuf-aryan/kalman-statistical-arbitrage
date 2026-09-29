@@ -1,24 +1,14 @@
-# src/backtesting.py
+# Convert positions into portfolio returns.
 #
-# Turns positions into portfolio returns.
+# We use simple returns for both legs.
 #
-# We use SIMPLE returns for each leg (not log returns), since that is what
-# actually gets paid out: r_t = P_t / P_(t-1) - 1.
-#
-# Portfolio weights (same convention for all three models):
-#   w_y =  position / (1 + |beta|)
+# Portfolio weights:
+#   w_y = position / (1 + |beta|)
 #   w_x = -position * beta / (1 + |beta|)
-# so the two legs' weights always add up to at most 1 in absolute value.
-# This is the same normalization for static, rolling and Kalman -- the
-# only thing that differs between the three strategies is beta itself.
 #
-# Transaction costs are charged on actual turnover (the change in weights
-# from one day to the next), not a flat fee per trade:
-#   cost_t = cost_bps/10000 * (|w_y_t - w_y_(t-1)| + |w_x_t - w_x_(t-1)|)
+# Transaction costs are based on daily turnover.
 #
-# We evaluate the test period only. Position is forced to zero on the
-# first and last day of the test period, so the strategy starts flat and
-# ends flat.
+# Only the test period is evaluated. The strategy starts and ends flat.
 
 import os
 import sys
@@ -76,15 +66,8 @@ for name, path in files.items():
     all_net[name] = net_return
     all_turnover[name] = turnover
 
-    # Trade log. `pos` here is ALREADY the executed (lagged) position, i.e.
-    # pos[i] is the position held DURING day i and earning day i's return.
-    #   entry_i = first day with pos != 0  -> first day the trade earns a
-    #             return, and the day the entry turnover/cost is charged.
-    #   i       = first day with pos == 0 after entry -> gross_return[i] = 0,
-    #             but the exit turnover/cost is charged on this day.
-    # So the trade's P&L window is days entry_i .. i INCLUSIVE, i.e.
-    # iloc[entry_i : i + 1]. (An earlier version used entry_i + 1, which
-    # dropped the first day's return and the entry cost from every trade.)
+    # Build the trade log from the executed positions.
+    # Include both entry and exit days in the trade P&L.
     trade_side = 0
     entry_i = None
     for i in range(len(pos)):
