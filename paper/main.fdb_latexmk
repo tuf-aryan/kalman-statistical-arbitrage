@@ -1,13 +1,13 @@
 # Fdb version 4
-["bibtex main"] 1790690321.7208 "main.aux" "main.bbl" "main" 1790690328.40901 0
+["bibtex main"] 1790692860.40201 "main.aux" "main.bbl" "main" 1790693691.6125 0
   "./references.bib" 1790689113.60656 4761 8778ac8d2006f6a335185e91147876dc ""
   "C:/Users/aryan/AppData/Local/Programs/MiKTeX/bibtex/bst/bibtex/apalike.bst" 1291972791 24635 604dafcc79f521a11ea73e506e1fbd98 ""
-  "main.aux" 1790690326.18573 10472 5b73d240c09a5f0718061ed416485530 "pdflatex"
+  "main.aux" 1790693688.75777 10470 8ca7207b941eba0f37abee4540197c5f "pdflatex"
   (generated)
   "main.bbl"
   "main.blg"
   (rewritten before read)
-["pdflatex"] 1790690322.57321 "c:/Users/aryan/Downloads/1/Kalman_stat_arb_final/Kalman_stat_arb/paper/main.tex" "main.pdf" "main" 1790690328.41255 0
+["pdflatex"] 1790693683.16289 "c:/Users/aryan/Downloads/1/Kalman_stat_arb_final/Kalman_stat_arb/paper/main.tex" "main.pdf" "main" 1790693691.76486 0
   "../results/figures/fig2_hedge_ratio_comparison.png" 1790690267.81229 100958 a147757e2f2fadfe3e4bf8cfd2dd07be ""
   "../results/figures/fig3_spreads_comparison.png" 1790690269.60023 249970 872e03d1f716f0776ff54eb42679ae2e ""
   "../results/figures/fig4_adf_halflife.png" 1790690270.38074 38551 342127af7da66e9d6e6c72d616793957 ""
@@ -141,10 +141,10 @@
   "C:/Users/aryan/AppData/Local/Programs/MiKTeX/tex/latex/refcount/refcount.sty" 1576433952 9878 9e94e8fa600d95f9c7731bb21dfb67a4 ""
   "C:/Users/aryan/AppData/Local/Programs/MiKTeX/tex/latex/rerunfilecheck/rerunfilecheck.sty" 1751104012 9684 a33a14b82ce60d6e77cb9be689d79ee6 ""
   "C:/Users/aryan/AppData/Local/Programs/MiKTeX/tex/latex/url/url.sty" 1388490452 12796 8edb7d69a20b857904dd0ea757c14ec9 ""
-  "c:/Users/aryan/Downloads/1/Kalman_stat_arb_final/Kalman_stat_arb/paper/main.tex" 1790689113.64058 34819 690c7712c18cfb3a9d5efe8f8135ee78 ""
-  "main.aux" 1790690326.18573 10472 5b73d240c09a5f0718061ed416485530 "pdflatex"
-  "main.bbl" 1790690322.41139 4041 7787e9bfe50738e0fb5d15d9e87af885 "bibtex main"
-  "main.out" 1790690326.20521 4056 659ebd8c8d2b164e6b840cad7cbc9090 "pdflatex"
+  "c:/Users/aryan/Downloads/1/Kalman_stat_arb_final/Kalman_stat_arb/paper/main.tex" 1790693671.7489 33439 fe4426fbd1dbdeece17c45abf0f28540 ""
+  "main.aux" 1790693688.75777 10470 8ca7207b941eba0f37abee4540197c5f "pdflatex"
+  "main.bbl" 1790692861.09397 4041 7787e9bfe50738e0fb5d15d9e87af885 "bibtex main"
+  "main.out" 1790693688.82907 4056 659ebd8c8d2b164e6b840cad7cbc9090 "pdflatex"
   "numbers.tex" 1790690275.96811 4599 664fae331a29cbb34590289a59aada94 ""
   (generated)
   "main.aux"
